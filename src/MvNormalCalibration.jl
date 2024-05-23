@@ -30,7 +30,7 @@ function computecalibration(::Type{CentralPredictionSet},
     [all(abs.(normalizedtrueval) .< thresh) for thresh in distthresholds]
   end
 
-  calibrationvals = mean(stack(containments; dims=1); dims=1)[:]
+  calibrationvals = mean(containments)
   (; pvals, calibrationvals)
 end
 
