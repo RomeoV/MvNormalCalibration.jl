@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>MvNormalCalibration.jl · MvNormalCalibration</title><meta name="title" content="MvNormalCalibration.jl · MvNormalCalibration"/><meta property="og:title" content="MvNormalCalibration.jl · MvNormalCalibration"/><meta property="twitter:title" content="MvNormalCalibration.jl · MvNormalCalibration"/><meta name="description" content="Documentation for MvNormalCalibration."/><meta property="og:description" content="Documentation for MvNormalCalibration."/><meta property="twitter:description" content="Documentation for MvNormalCalibration."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="assets/justified-text.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href>MvNormalCalibration</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li class="is-active"><a class="tocitem" href>MvNormalCalibration.jl</a><ul class="internal"><li><a class="tocitem" href="#A-Brief-Usage-Example"><span>A Brief Usage Example</span></a></li><li><a class="tocitem" href="#Measuring-Sharpness"><span>Measuring Sharpness</span></a></li></ul></li><li><a class="tocitem" href="mathematical_background/">Mathematical Background</a></li><li><a class="tocitem" href="api_reference/">API Reference</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>MvNormalCalibration.jl</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>MvNormalCalibration.jl</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/RomeoV/MvNormalCalibration.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/RomeoV/MvNormalCalibration.jl/blob/master/docs/src/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="MvNormalCalibration.jl"><a class="docs-heading-anchor" href="#MvNormalCalibration.jl">MvNormalCalibration.jl</a><a id="MvNormalCalibration.jl-1"></a><a class="docs-heading-anchor-permalink" href="#MvNormalCalibration.jl" title="Permalink"></a></h1><p>This package implements computing <em>calibration</em> and a measure of <em>sharpness</em>, specifically for uni- and multivariate normal distributions, i.e. &quot;Gaussians&quot;. This page will present a brief usage example and rationale for the  <a href="api_reference/#MvNormalCalibration.computecalibration-Tuple{AbstractVector{&lt;:Distributions.Normal}, AbstractVector{&lt;:Real}}"><code>computecalibration</code></a> and <a href="api_reference/#MvNormalCalibration.sharpness-Tuple{Distributions.Normal}"><code>sharpness</code></a> functions. We also provide some <a href="mathematical_background/#Mathematical-Background">Mathematical Background</a> on calibration and an <a href="api_reference/#API-Reference">API Reference</a>.</p><h2 id="A-Brief-Usage-Example"><a class="docs-heading-anchor" href="#A-Brief-Usage-Example">A Brief Usage Example</a><a id="A-Brief-Usage-Example-1"></a><a class="docs-heading-anchor-permalink" href="#A-Brief-Usage-Example" title="Permalink"></a></h2><p>Before we go into the mathematical background, here&#39;s a quick usage example for measuring calibration using <a href="api_reference/#MvNormalCalibration.computecalibration-Tuple{AbstractVector{&lt;:Distributions.Normal}, AbstractVector{&lt;:Real}}"><code>computecalibration</code></a>. In this example, we make a constant 2D prediction; however, the true distribution slightly  changes at every time step.</p><pre><code class="language-julia hljs">using Distributions
+using MvNormalCalibration: computecalibration, sharpness
+using LinearAlgebra: I, hermitianpart
+
+nobs = 500
+
+# We predict that every observation is a zero mean, iso-normal...
+predictions = [MvNormal(zeros(2), I(2)) for _ in 1:nobs]
+# ... but actually, each observation has nonzero mean and small covariate terms.
+# Note: Usually we don&#39;t know the true distributions.
+true_distributions = [MvNormal((rand(2).-0.5)./10, I(2) + hermitianpart(rand(2,2)))
+                      for _ in 1:nobs]
+observations = rand.(true_distributions)
+
+# Let&#39;s compute calibration for our predictions.
+(; pvals, calibrationvals) = computecalibration(predictions, observations)
+
+# As expected, there is a significant gap between theoretical and actual calibration values.
+@info &quot;&quot;&quot;
+Maximum calibration discrepancy for (somewhat inaccurate) predictions
+$(maximum(abs, pvals - calibrationvals) |&gt; x-&gt;round(x; sigdigits=2))
+&quot;&quot;&quot;
+
+# However, if we had managed to predict each distribution accurately, things would look better.
+(; pvals, calibrationvals) = computecalibration(true_distributions, observations)
+@info &quot;&quot;&quot;
+and for true distributions
+$(maximum(abs, pvals - calibrationvals) |&gt; x-&gt;round(x; sigdigits=2)).
+&quot;&quot;&quot;</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr36"><span class="sgr1">┌ Info: </span></span>Maximum calibration discrepancy for (somewhat inaccurate) predictions
+<span class="sgr36"><span class="sgr1">└ </span></span>0.15
+<span class="sgr36"><span class="sgr1">┌ Info: </span></span>and for true distributions
+<span class="sgr36"><span class="sgr1">└ </span></span>0.028.</code></pre><h3 id="Plotting-calibration-results"><a class="docs-heading-anchor" href="#Plotting-calibration-results">Plotting calibration results</a><a id="Plotting-calibration-results-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting-calibration-results" title="Permalink"></a></h3><p>It can also be useful to plot the resulting calibration values again the theoretical values. Indeed, for perfect calibration, we expect the theoretical coverage probabilities (<code>pvals</code>) to exactly match the observed coverage probabilities (<code>calibrationvals</code>) computed by <a href="api_reference/#MvNormalCalibration.computecalibration-Tuple{AbstractVector{&lt;:Distributions.Normal}, AbstractVector{&lt;:Real}}"><code>computecalibration</code></a>. Let&#39;s compute and plot calibration for overly optimistic predictions (variance too small, assumes zero-mean), for &quot;perfect&quot; predictions, and for overly pessimistic predictions.</p><pre><code class="language-julia hljs">using Distributions, MvNormalCalibration, LinearAlgebra, Plots
+plot_kwargs = (; label=&quot;Predictions&quot;, aspect_ratio=:equal, xlabel=&quot;Theoretical coverage&quot;,
+                 ylabel=&quot;Observed coverage&quot;, xlims=(0,1), ylims=(0,1), size=(750, 280))
+nobs = 500
+optimistic_predictions  = [MvNormal(zeros(2), I(2)) for _ in 1:nobs]
+true_distributions      = [MvNormal(rand(2)./10, I(2) + hermitianpart(rand(2,2)))
+                           for _ in 1:nobs]
+pessimistic_predictions = [1.3^2 * I(2)] .* optimistic_predictions
+observations = rand.(true_distributions)
+
+p1 = plot(computecalibration(optimistic_predictions, observations)...;
+          title=&quot;Overconfident&quot;, plot_kwargs...)
+p2 = plot(computecalibration(true_distributions, observations)...;
+          title=&quot;Well calibrated&quot;, plot_kwargs...)
+p3 = plot(computecalibration(pessimistic_predictions, observations)...;
+          title=&quot;Pessimistic&quot;, plot_kwargs...)
+for p in [p1, p2, p3]; plot!(p, [0,1], [0,1]; label=&quot;Ground Truth&quot;); end
+plot(p1, p2, p3; layout=(1,3))</code></pre><img src="index-c236cce4.svg" alt="Example block output"/><h2 id="Measuring-Sharpness"><a class="docs-heading-anchor" href="#Measuring-Sharpness">Measuring Sharpness</a><a id="Measuring-Sharpness-1"></a><a class="docs-heading-anchor-permalink" href="#Measuring-Sharpness" title="Permalink"></a></h2><p>Calibration paints only half the picture. We can have well calibrated, but still imprecise predictions if they have (unnecessarily) large uncertainty, i.e. they are <em>not sharp</em>. Here is an example of such a setup, and how to compute and interpret <a href="api_reference/#MvNormalCalibration.sharpness-Tuple{Distributions.Normal}"><code>sharpness</code></a>.</p><pre><code class="language-julia hljs">using Distributions, MvNormalCalibration, LinearAlgebra
+preds_poor  = [MvNormal(zeros(2), I(2)) for _ in 1:1_000]
+preds_sharp = [MvNormal( rand(D), (0.1^2).*I(2)) for D in preds_poor]
+observations = rand.(preds_sharp)
+@info &quot;&quot;&quot;Average sharpness of poor predictions:
+$(mean(sharpness.(preds_poor)) |&gt; x-&gt;round(x; sigdigits=2))
+&quot;&quot;&quot;
+@info &quot;&quot;&quot;Average sharpness of sharp predictions:
+$(mean(sharpness.(preds_sharp)) |&gt; x-&gt;round(x; sigdigits=2))
+&quot;&quot;&quot;</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"><span class="sgr36"><span class="sgr1">┌ Info: </span></span>Average sharpness of poor predictions:
+<span class="sgr36"><span class="sgr1">└ </span></span>3.1
+<span class="sgr36"><span class="sgr1">┌ Info: </span></span>Average sharpness of sharp predictions:
+<span class="sgr36"><span class="sgr1">└ </span></span>0.031</code></pre><p>Indeed we see that the one set of predictions has one hundred times lower uncertainty than the other. But do they both predict the observations equally well? Let&#39;s compare both predictions&#39; calibration and sharpness. We will see that both predictions have almost  identical calibration curves, despite their difference in uncertainty.</p><h3 id="Comparing-predictions-via-calibration-and-sharpness"><a class="docs-heading-anchor" href="#Comparing-predictions-via-calibration-and-sharpness">Comparing predictions via calibration and sharpness</a><a id="Comparing-predictions-via-calibration-and-sharpness-1"></a><a class="docs-heading-anchor-permalink" href="#Comparing-predictions-via-calibration-and-sharpness" title="Permalink"></a></h3><pre><code class="language-julia hljs">using Distributions, MvNormalCalibration, Plots, LinearAlgebra
+import Random: seed!
+preds_poor  = [MvNormal(zeros(2), I(2)) for _ in 1:1_000]
+preds_sharp = [MvNormal( rand(D), (0.1^2).*I(2)) for D in preds_poor]
+
+observations = rand.(preds_sharp)
+pvals = 0:0.01:1
+calibrationvals_poor  = computecalibration(preds_poor, observations; pvals)[:calibrationvals]
+calibrationvals_sharp = computecalibration(preds_sharp, observations; pvals)[:calibrationvals]
+
+plt1 = plot(pvals, calibrationvals_poor;
+            label=&quot;Poor (constant) predictions&quot;, title=&quot;Calibration curve&quot;,
+            aspect_ratio=:equal, xlabel=&quot;Theoretical coverage&quot;, ylabel=&quot;Observed coverage&quot;,
+            xlims=(0,1), ylims=(0,1), size=(700, 360))
+plot!(pvals, calibrationvals_sharp; label=&quot;Sharp predictions&quot;)
+
+seed!(1)
+xs = LinRange(-3, 3, 100)
+plt2 = plot(xs, x-&gt;pdf(Normal(), x);
+            label=&quot;Poor (constant) predictions&quot;, title=&quot;Predictions&quot;, xlims=(-3, 3),ylims=(0, 6), aspect_ratio=:equal, xlabel=raw&quot;$x$&quot;, ylabel=&quot;Probability &quot;*raw&quot;$pdf(x)$&quot;)
+for i in 1:6
+   D = Normal(randn(), 0.1)
+   xs_=LinRange(mean(D)-5*std(D), mean(D)+5*std(D), 100)
+   plot!(plt2, xs_, x-&gt;pdf(D, x); color=2, label=(i==1 ? &quot;Sharp predictions (i=1,2,..)&quot; : nothing))
+end
+plot(plt1, plt2)</code></pre><img src="index-d3677a09.svg" alt="Example block output"/><p>We can see that both sets of predictions have practically identical calibration curves, but  extremely different sharpness – i.e. the sharp predictions are much more precise for each sample.</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="mathematical_background/">Mathematical Background »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.4.1 on <span class="colophon-date" title="Tuesday 28 May 2024 07:36">Tuesday 28 May 2024</span>. Using Julia version 1.10.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
