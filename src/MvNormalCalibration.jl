@@ -5,8 +5,6 @@ using SpecialFunctions
 export CentralPredictionSet
 export computecalibration, sharpness
 
-greet() = print("Hello World!")
-
 abstract type PredictionSetType end
 
 struct CentralPredictionSet <: PredictionSetType end
