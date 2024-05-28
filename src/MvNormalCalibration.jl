@@ -11,6 +11,20 @@ abstract type PredictionSetType end
 
 struct CentralPredictionSet <: PredictionSetType end
 
+"""
+    computecalibration(preds::AbstractVector{<:Normal}, truevals::AbstractVector{<:Real}; pvals)
+    computecalibration(preds::AbstractVector{<:MvNormal}, truevals::AbstractVector{<:AbstractVector{<:Real}}; pvals)
+
+Compute calibration for a series of predicted (uni- or multivariate) normal distributions
+given a series of true observations using central prediction sets.
+
+Returns a named tuple `(; pvals, calibrationvals)`.
+If the predictions are well calibrated, then `pvals ≈ calibrationvals` for all indices.
+Plotting `plot(pvals, calibrationvals)` should then give a straight line from (0, 0), to (1, 1).
+
+# kwargs
+- `pvals`: The probabilities to evaluate the coverage at. Defaults to `0:0.05:1`.
+"""
 function computecalibration(preds::AbstractVector{<:Normal},
         truevals::AbstractVector{<:Real};
         kwargs...)
@@ -68,11 +82,25 @@ function computecalibration(::Type{CentralPredictionSet},
     (; pvals, calibrationvals)
 end
 
+"""
+    sharpness(pred::Normal)
+    sharpness(pred::AbstractMvNormal)
+
+Compute sharpness for (uni- or multivariate) normal distribution, which we define as the
+(hyper-)volume of the ellipsoid that contains one standard deviation of the distribution.
+
+# Examples
+```julia-repl
+julia> sharpness(Normal())
+2
+julia> sharpness(MvNormal(zeros(2), I(2)))  # recall area of circle=πr^2
+π
+```
+"""
 function sharpness(pred::Normal)
     2 * std(pred)
 end
 
-# Measures volume of 1std ellipsoid.
 function sharpness(pred::AbstractMvNormal)
     Λvec, _Q = eigen(cov(pred))
     d = length(pred)
