@@ -1,7 +1,7 @@
 # MvNormalCalibration.jl
 
 [![Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://romeov.github.io/MvNormalCalibration.jl/dev/)
-[![codecov](https://codecov.io/gh/RomeoV/ProbabilisticParameterEstimators.jl/graph/badge.svg?token=5J82UXPL8I)](https://codecov.io/gh/RomeoV/ProbabilisticParameterEstimators.jl)
+[![codecov](https://codecov.io/gh/RomeoV/MvNormalCalibration.jl/graph/badge.svg?token=5J82UXPL8I)](https://codecov.io/gh/RomeoV/MvNormalCalibration.jl)
 [![Aqua](https://img.shields.io/badge/Tested_with-Aqua-turquoise)](https://github.com/JuliaTesting/Aqua.jl)
 [![JET](https://img.shields.io/badge/Tested_with-JET-violet)](https://github.com/aviatesk/JET.jl)
 
