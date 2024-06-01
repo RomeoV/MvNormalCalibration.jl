@@ -71,7 +71,7 @@ function computecalibration(::Type{CentralPredictionSet},
     dist_thresholds = quantile.([Normal()], 1 / 2 .+ pvals .^ (1 / d) / 2)
     containments = map(zip(preds, truevals)) do (pred, trueval)
         Λvec, Q = eigen(cov(pred))
-        normalized_trueval = Q * (trueval - mean(pred)) ./ sqrt.(Λvec)
+        normalized_trueval = Q' * (trueval - mean(pred)) ./ sqrt.(Λvec)
         # all normalized values have to be in a given distance threshold
         all(abs.(normalized_trueval) .< dist_thresholds'; dims = 1)[:]
     end
