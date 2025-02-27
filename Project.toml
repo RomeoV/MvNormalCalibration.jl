@@ -1,7 +1,7 @@
 name = "MvNormalCalibration"
 uuid = "bbc1677d-7cf1-46ff-9fcf-9af1de965559"
 authors = ["Romeo Valentin <romeov@stanford.edu>"]
-version = "0.2.1"
+version = "0.2.2"
 
 [deps]
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
