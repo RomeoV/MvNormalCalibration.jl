@@ -1,15 +1,18 @@
 @testset "sampling from ground truths" begin
     @testset "univariate" begin
-        # When the ground truths are sampled exactly from the predictions,
-        # we will always be calibrated, no matter the predictions.
-        (; preds, measurements) = map(1:500_000) do _
-            pred = Normal(rand(), rand() + 1.0)
-            measurement = rand(pred)
-            (; preds = pred, measurements = measurement)
-        end |> StructArray
-        (; pvals, calibrationvals) = computecalibration(preds, measurements;
-            pvals = 0.00:0.05:1.0)
-        @test pvals≈calibrationvals rtol=1e-2
+        @testset for scheme in [CentralPredictionSet, LeftPredictionSet]
+            # When the ground truths are sampled exactly from the predictions,
+            # we will always be calibrated, no matter the predictions.
+            (; preds, measurements) = map(1:500_000) do _
+                pred = Normal(rand(), rand() + 1.0)
+                measurement = rand(pred)
+                (; preds = pred, measurements = measurement)
+            end |> StructArray
+            (; pvals, calibrationvals) = computecalibration(scheme,
+                preds, measurements;
+                pvals = 0.00:0.05:1.0)
+            @test pvals≈calibrationvals rtol=1e-2
+        end
     end
 
     @testset "compare univariate and multivariate " begin
